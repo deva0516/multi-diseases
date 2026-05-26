@@ -3,17 +3,16 @@ Flask==2.3.3
 Werkzeug==2.3.7
 
 # Machine Learning & Deep Learning
-tensorflow==2.13.0
-keras==2.13.1
-numpy==1.24.3
+tensorflow==2.17.0
+keras==3.4.1
+numpy==1.26.4
 
 # Image Processing
 Pillow==10.1.0
-opencv-python==4.7.0.72
+opencv-python-headless==4.10.0.84
 
 # Data Processing
-pandas==2.0.3
+pandas==2.2.2
 
-# Additional Dependencies
-h5py==3.8.0
+h5py==3.11.0
 protobuf==4.25.3

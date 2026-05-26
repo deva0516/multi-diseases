@@ -1,0 +1,11 @@
+0 Meningioma 
+1 Glioma
+2 Notumor
+3 Pituitary
+4 No Lung Cancer Detected
+5 Risk of Lung Cancer
+6 CKD Disease Predicted
+7 Absence of CKD
+8 Presence of Parkinsons
+9 Absence of Parkinsons
+10 Enter a Valid Image

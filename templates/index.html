@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Diagnosis System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .upload-section {
+            text-align: center;
+            padding: 40px;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-section:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+            transform: translateY(-5px);
+        }
+
+        .upload-section i {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upload-section p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-upload:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .preview-section {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        #uploadedImage {
+            max-width: 400px;
+            max-height: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px auto;
+            display: block;
+        }
+
+        .loader {
+            display: none;
+            margin: 30px auto;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3rem;
+        }
+
+        .result-container {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .disease-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .disease-card h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .confidence-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        .severity-high {
+            background: #ff4757;
+        }
+
+        .severity-moderate {
+            background: #ffa502;
+        }
+
+        .severity-none {
+            background: #2ed573;
+        }
+
+        .info-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-section h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-section h4 i {
+            font-size: 1.5rem;
+        }
+
+        .info-section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-list li {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .info-list li:hover {
+            background: #f0f2ff;
+            transform: translateX(5px);
+        }
+
+        .info-list li i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.9;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-card {
+                padding: 20px;
+            }
+            
+            #uploadedImage {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-heartbeat"></i> AI Medical Diagnosis System</h1>
+            <p>Advanced Multi-Disease Detection with AI-Powered Analysis</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="main-card">
+            <!-- Upload Section -->
+            <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h3>Upload Medical Scan</h3>
+                <p>Supports Brain MRI, Lung CT, Kidney Scan, and more</p>
+                <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
+                <button class="btn-upload" type="button">
+                    <i class="fas fa-folder-open"></i> Choose File
+                </button>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-section" id="previewSection">
+                <h4>Uploaded Image:</h4>
+                <img id="uploadedImage" alt="Uploaded scan">
+                <br>
+                <button class="btn-upload mt-3" onclick="analyzeScan()" id="analyzeBtn">
+                    <i class="fas fa-brain"></i> Analyze Scan
+                </button>
+            </div>
+
+            <!-- Loader -->
+            <div class="loader text-center" id="loader">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-3">Analyzing medical scan with AI...</p>
+            </div>
+
+            <!-- Results Container -->
+            <div class="result-container" id="resultContainer">
+                <!-- Disease Card -->
+                <div class="disease-card">
+                    <h2 id="diseaseName"><i class="fas fa-diagnoses"></i> Disease Name</h2>
+                    <div class="confidence-badge">
+                        <i class="fas fa-chart-line"></i> Confidence: <span id="confidence">0%</span>
+                    </div>
+                    <div class="severity-badge" id="severityBadge">
+                        <i class="fas fa-exclamation-triangle"></i> <span id="severity">Severity</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="info-section">
+                    <h4><i class="fas fa-info-circle"></i> Description</h4>
+                    <p id="description">Disease description will appear here...</p>
+                </div>
+
+                <!-- Causes -->
+                <div class="info-section">
+                    <h4><i class="fas fa-question-circle"></i> Possible Causes</h4>
+                    <ul class="info-list" id="causesList"></ul>
+                </div>
+
+                <!-- Home Remedies -->
+                <div class="info-section">
+                    <h4><i class="fas fa-home"></i> Home Remedies & Lifestyle Changes</h4>
+                    <ul class="info-list" id="remediesList"></ul>
+                </div>
+
+                <!-- Medicines -->
+                <div class="info-section">
+                    <h4><i class="fas fa-pills"></i> Recommended Medicines & Treatment</h4>
+                    <ul class="info-list" id="medicinesList"></ul>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="alert alert-warning mt-4" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Medical Disclaimer:</strong> This AI system provides preliminary analysis only. 
+                    Please consult with qualified healthcare professionals for accurate diagnosis and treatment.
+                </div>
+
+                <!-- New Analysis Button -->
+                <div class="text-center mt-4">
+                    <button class="btn-upload" onclick="resetAnalysis()">
+                        <i class="fas fa-redo"></i> Analyze Another Scan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><i class="fas fa-shield-alt"></i> Secure & Confidential Medical Analysis</p>
+            <p>&copy; 2026 AI Medical Diagnosis System | Powered by Deep Learning</p>
+        </div>
+    </div>
+
+    <script>
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('uploadedImage').src = e.target.result;
+                    document.getElementById('previewSection').style.display = 'block';
+                    document.getElementById('resultContainer').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function analyzeScan() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file first!');
+                return;
+            }
+
+            // Show loader
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('resultContainer').style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loader
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Display results
+                displayResults(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+                alert('An error occurred during analysis. Please try again.');
+            });
+        }
+
+        function displayResults(data) {
+            // Show result container
+            document.getElementById('resultContainer').style.display = 'block';
+
+            // Disease name and confidence
+            document.getElementById('diseaseName').innerHTML = 
+                `<i class="fas fa-diagnoses"></i> ${data.disease}`;
+            document.getElementById('confidence').textContent = data.confidence;
+
+            // Severity
+            document.getElementById('severity').textContent = data.severity;
+            const severityBadge = document.getElementById('severityBadge');
+            
+            if (data.severity.includes('High')) {
+                severityBadge.className = 'severity-badge severity-high';
+            } else if (data.severity.includes('Moderate')) {
+                severityBadge.className = 'severity-badge severity-moderate';
+            } else {
+                severityBadge.className = 'severity-badge severity-none';
+            }
+
+            // Description
+            document.getElementById('description').textContent = data.description;
+
+            // Causes
+            const causesList = document.getElementById('causesList');
+            causesList.innerHTML = '';
+            data.causes.forEach(cause => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-chevron-right"></i> ${cause}`;
+                causesList.appendChild(li);
+            });
+
+            // Home Remedies
+            const remediesList = document.getElementById('remediesList');
+            remediesList.innerHTML = '';
+            data.home_remedies.forEach(remedy => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-leaf"></i> ${remedy}`;
+                remediesList.appendChild(li);
+            });
+
+            // Medicines
+            const medicinesList = document.getElementById('medicinesList');
+            medicinesList.innerHTML = '';
+            data.medicines.forEach(medicine => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-capsules"></i> ${medicine}`;
+                medicinesList.appendChild(li);
+            });
+
+            // Scroll to results
+            document.getElementById('resultContainer').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+
+        function resetAnalysis() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

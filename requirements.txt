@@ -1,18 +1,4 @@
-# Core Web Framework
 Flask==2.3.3
-Werkzeug==2.3.7
-
-# Machine Learning & Deep Learning
-tensorflow==2.17.0
-keras==3.4.1
+tensorflow-cpu==2.17.0
 numpy==1.26.4
-
-# Image Processing
 Pillow==10.1.0
-opencv-python-headless==4.10.0.84
-
-# Data Processing
-pandas==2.2.2
-
-h5py==3.11.0
-protobuf==4.25.3
